@@ -31,7 +31,7 @@ const command = {
         client.user.setPresence({
             activities: [
                 {
-                    name: 'testing new work',
+                    name: 'with ChatGPT',
                     type: 'PLAYING'
                 }
             ],

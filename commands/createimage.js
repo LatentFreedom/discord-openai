@@ -35,7 +35,7 @@ const command = {
         client.user.setPresence({
             activities: [
                 {
-                    name: 'using AI',
+                    name: 'with AI',
                     type: 'PLAYING'
                 }
             ],
