@@ -9,14 +9,17 @@ Discord bot that interacts with the OpenAI API
 ## Running the bot
 1. Get the needed packages with `npm install`
 2. Create `.env` and fill it with the needed values
-3. run with `node index.js`
+3. Edit `info.json` with the optional values
+4. run with `node index.js`
 
 ## Values in `.env`
 ```
 DISCORD_TOKEN=
+CHATGPT_SESSION_TOKEN=
 OPENAI_API_KEY=
 OPENAI_API_ORG=
 ```
 
 ## Discord -Commands (admin)
-1. **>createimage** | Fetch image generated from a prompt using openAI
+1. **>createimage** | Fetch Dalle-2 generated image given a prompt
+2. **>chatgpt** | Fetch response using ChatGPT given a prompt

@@ -1,7 +1,7 @@
-const { MessageEmbed } = require('discord.js')
+import { MessageEmbed } from 'discord.js'
 
 const sendResponse = async (message, data, prompt) => {
-    console.log('[sendResponse:createimage]')
+    // console.log('[sendResponse:createimage]')
     const embed = new MessageEmbed()
     .setTitle(`Create Image`)
     .addFields(
@@ -16,8 +16,8 @@ const sendResponse = async (message, data, prompt) => {
     await message.channel.send({ embeds: [embed, embed1, embed2] })
 }
 
-const sendErrorResponse = async (message) => {
-    console.log('[sendErrorResponse:createimage] [ERROR]')
+const sendErrorResponse = async (message, e) => {
+    // console.log(`[sendErrorResponse:createimage] [ERROR] ${e}`)
     const embed = new MessageEmbed()
     .setTitle(`Create Image`)
     .addFields(
@@ -26,7 +26,7 @@ const sendErrorResponse = async (message) => {
     await message.channel.send({ embeds: [embed] })
 }
 
-module.exports = {
+const command = {
     privilege: 'user',
 	name : 'createimage',
     description : 'Get AI images from a given prompt created with OpenAI',
@@ -43,9 +43,10 @@ module.exports = {
         })
 
         const prompt = message.content.replace('>createimage ','')
+        // console.log(prompt)
 
         if (!prompt) {
-            sendErrorResponse(message)
+            sendErrorResponse(message, 'no prompt given')
         } else {
 
             try {
@@ -56,7 +57,7 @@ module.exports = {
                 })
                 sendResponse(message, response, prompt)
             } catch(e) {
-                sendErrorResponse(message)
+                sendErrorResponse(message, e)
             }
 
         }
@@ -72,4 +73,6 @@ module.exports = {
         })
 
 	},
-};
+}
+
+export { command }
