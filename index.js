@@ -1,26 +1,11 @@
 import { Client, Collection, Intents }  from 'discord.js'
-import { Configuration, OpenAIApi } from "openai"
 import { config }  from "dotenv"
+
+import { getJsonData, setPresence, createCommands } from './utils/helpers.js'
 
 config({ path: './.env' })
 
-import fs from 'fs'
-
-const getJsonData = () => {
-    let rawdata = fs.readFileSync('info.json');
-    const data = JSON.parse(rawdata);
-    // console.log(data);
-    return data;
-}
-
-let data = getJsonData();
-
-// Configure OpenAI API
-const configuration = new Configuration({
-	organization: process.env.OPENAI_API_ORG,
-	apiKey: process.env.OPENAI_API_KEY,
-})
-const openai = new OpenAIApi(configuration)
+let data = getJsonData('info.json')
 
 // Configure Discord Client
 const client = new Client({
@@ -31,44 +16,10 @@ const client = new Client({
 let slashCommands = new Collection()
 let textCommands = new Collection()
 
-const createCommands = async () => {
-	// Set commands from files
-	const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'))
-	for (const file of commandFiles) {
-		const command = await import(`./commands/${file}`)
-		if (command.command.data) {
-			slashCommands.set(command.command.data.name, command.command)
-		} else {
-			textCommands.set(command.command.name, command.command)
-		}
-	}
-	// Get guilds bot is in
-	const Guilds = client.guilds.cache.map(guild => guild.id)
-	// Add commands to all guilds
-    Guilds.forEach(guildId => {
-        const guild = client.guilds.cache.get(guildId)
-		slashCommands.forEach(command => {
-			guild.commands.create({
-				name: command.data.name,
-				description: command.data.description
-			})
-		})
-	})
-}
-
 client.on('ready', async () => {
     console.log('OpenAI Bot Running...')
-	// client.user.setActivity(`in the Metaverse`)
-	client.user.setPresence({
-        activities: [
-			{
-				name: 'for commands',
-				type: 'WATCHING'
-			}
-		],
-		status: "idle"
-    })
-	createCommands()
+	setPresence(client, 'for commands','WATCHING','idle')
+	createCommands(client, slashCommands, textCommands)
 })
 
 client.on('messageCreate', async (message) => {
@@ -90,19 +41,11 @@ client.on('messageCreate', async (message) => {
 	if (!command) return
 
 	try {
-		await command.execute(message, args, client, openai)
+		await command.execute(message, args, client)
 	} catch (error) {
 		console.error(error)
 		await message.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-		client.user.setPresence({
-            activities: [
-                {
-                    name: 'commands',
-                    type: 'LISTENING'
-                }
-            ],
-            status: "idle"
-        })
+		setPresence(client, 'for commands','WATCHING','idle')
 	}
 })
 

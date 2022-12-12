@@ -1,4 +1,14 @@
 import { MessageEmbed } from 'discord.js'
+import { Configuration, OpenAIApi } from "openai"
+
+import { setPresence } from '../utils/helpers.js'
+
+// Configure OpenAI API
+const configuration = new Configuration({
+	organization: process.env.OPENAI_API_ORG,
+	apiKey: process.env.OPENAI_API_KEY,
+})
+const openai = new OpenAIApi(configuration)
 
 const sendResponse = async (message, data, prompt) => {
     // console.log('[sendResponse:createimage]')
@@ -30,17 +40,9 @@ const command = {
     privilege: 'user',
 	name : 'createimage',
     description : 'Get AI images from a given prompt created with OpenAI',
-	async execute(message, args, client, openai) {
+	async execute(message, args, client) {
 
-        client.user.setPresence({
-            activities: [
-                {
-                    name: 'with AI',
-                    type: 'PLAYING'
-                }
-            ],
-            status: "online"
-        })
+        setPresence(client, 'with AI','PLAYING','idle')
 
         const prompt = message.content.replace('>createimage ','')
         // console.log(prompt)
@@ -62,15 +64,7 @@ const command = {
 
         }
 
-        client.user.setPresence({
-            activities: [
-                {
-                    name: 'for commands',
-                    type: 'WATCHING'
-                }
-            ],
-            status: "idle"
-        })
+        setPresence(client, 'for commands','WATCHING','idle')
 
 	},
 }

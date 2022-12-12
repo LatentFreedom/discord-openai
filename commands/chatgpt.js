@@ -1,6 +1,8 @@
 import { MessageEmbed } from 'discord.js'
 import { ChatGPTAPI } from 'chatgpt'
 
+import { setPresence } from '../utils/helpers.js'
+
 const sendResponse = async (message, data, prompt) => {
     console.log('[chatgpt] send response')
     const embed = new MessageEmbed()
@@ -28,15 +30,7 @@ const command = {
     description : 'chat with chatgpt',
 	async execute(message, args, client) {
 
-        client.user.setPresence({
-            activities: [
-                {
-                    name: 'with ChatGPT',
-                    type: 'PLAYING'
-                }
-            ],
-            status: "online"
-        })
+        setPresence(client, 'with ChatGPT','PLAYING','idle')
         
         const prompt = message.content.replace('>chatgpt ','')
         // console.log(prompt)
@@ -99,15 +93,7 @@ const command = {
 
         }
 
-        client.user.setPresence({
-            activities: [
-                {
-                    name: 'for commands',
-                    type: 'WATCHING'
-                }
-            ],
-            status: "idle"
-        })
+        setPresence(client, 'for commands','WATCHING','idle')
 
 	},
 }
