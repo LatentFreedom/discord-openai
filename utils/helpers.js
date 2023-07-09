@@ -59,15 +59,23 @@ const deleteCommands = async () => {
 }
 
 const setPresence = async (client, name, type, status) => {
+	const types = {
+		'PLAYING':0,
+		'STREAMING':1,
+		'LISTENING':2,
+		'WATCHING':3,
+		'CUSTOM':4,
+		'COMPETING':5
+	}
 	client.user.setPresence({
         activities: [
 			{
 				name: name,
-				type: type
+				type: types[type]
 			}
 		],
 		status: status
     })
 }
 
-export { getJsonData, saveJsonData, setPresence }
+export { getJsonData, saveJsonData, setPresence, createCommands, deleteCommands }
